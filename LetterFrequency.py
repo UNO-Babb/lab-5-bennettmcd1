@@ -7,46 +7,45 @@
 #Use Excel or similar spreadsheet software to visualize the frequencies of the CSV file.
 
 import os
+import csv
 
 def countLetters(message):
-    alpha = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
-    message = message.upper()
+    alpha = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"  # The alphabet to map letter frequencies
+    message = message.upper()  # Convert the message to uppercase to ignore case
 
-    freq = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
+    # Initialize frequency array for each letter (A-Z), 26 letters total.
+    freq = [0] * 26  # This will count occurrences of each letter from A to Z
 
-    #loop through each letter
-    #Find the position in the alphabet
-    #Increase the frequency at that position. If position was 5, then frequencies[5] = frequencies[5] + 1
+    # Loop through each letter in the message
+    for letter in message:
+        if letter.isalpha():  # Only count alphabetic characters (skip punctuation/numbers)
+            index = alpha.find(letter)  # Find the letter's position in the alphabet (0 = A, 1 = B, etc.)
+            freq[index] += 1  # Increase the count at the position for that letter
 
-
-
-    #Create the output text in the format A,5\n if there were 5 letter A in the message.
-    #Remember that the \n is the symbol for a new line.
-
-    output = ""
+    # Prepare the output in CSV format (letter, frequency)
+    output = []
     for i in range(26):
-        print (alpha[i], ":", freq[i])
-        line = alpha[i] + "," + str(freq[i]) + "\n"
-        output = output + line
+        line = [alpha[i], freq[i]]  # Create a row with letter and its frequency
+        output.append(line)  # Add it to the output list
 
-    writeToFile(output)
+    writeToFile(output)  # Call the function to write the data to a file
 
-
-def writeToFile(fileText):
+def writeToFile(data):
+    # Determine the current directory of the script to save the file correctly
     dir_path = os.path.dirname(os.path.realpath(__file__))
     os.chdir(dir_path)
 
-    freqFile = open("frq.csv", 'w')
-    freqFile.write(fileText)
+    # Open (or create) a CSV file to write the frequencies
+    with open('letter_frequency.csv', 'w', newline='') as csvfile:
+        writer = csv.writer(csvfile)
+        writer.writerow(["Letter", "Frequency"])  # Write the header row
+        writer.writerows(data)  # Write the data rows
 
-    freqFile.close()
-
+    print("Frequency data saved to 'letter_frequency.csv'")
 
 def main():
-    msg = input("Enter a message: ")
-    countLetters(msg)
-
-
+    msg = input("Enter a message: ")  # Prompt the user to enter a message
+    countLetters(msg)  # Call the function to count letter frequencies
 
 if __name__ == '__main__':
-  main()
+    main()  # Run the main function when the script is executed
